@@ -1,18 +1,13 @@
 from django.urls import path
-from .views import (
-    category_home,
-    user_signup,
-    user_login,
-    forgot_password,
-    expenses_home,
-    category_page
-)
-
+from .views import category_home, expenses_home, category_page, userSignup, userLogin, forgot_password, verify_otp, reset_password, success_password_reset
 urlpatterns = [
-    path('', category_home, name='category-home'),
-    path('signup/', user_signup, name='user-signup'),
-    path('login/', user_login, name='user-login'),
-    path('forgot-password/', forgot_password, name='forgot-password'),
-    path('expenses/', expenses_home, name='expenses_home'),
-    path('category/', category_page, name='category_page'),
-]
+     path('', category_home, name='category-home'),
+     path('expenses', expenses_home , name='expenses_home'),
+     path('category', category_page , name='category_page'),
+     path('user-signup', userSignup, name='user-signup'),
+     path('user-login', userLogin, name='user-login'),
+     path('forgot-password/', forgot_password, name='forgot-password'),
+     path('verify-otp/', verify_otp, name='verify-otp'),
+     path('reset-password/', reset_password, name='reset-password'),
+     path('success-password-reset/', success_password_reset, name='success-password-reset'),
+ ]
