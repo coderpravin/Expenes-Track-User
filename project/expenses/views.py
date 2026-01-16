@@ -15,10 +15,19 @@ def category_home(request):
     context = {'categories': catogories}
     return render(request, 'expenses/category_home.html', context)
 
-def category_page(request):
-    categories = Category.objects.all()     
-    context = {'categories': categories}
-    return render(request, 'expenses/category_page.html', context)
+def user_signup(request):
+    if request.method == "POST":
+        form =UserForm(request.POST)
+        if form.is_valid():
+            user =  form.save(commit=False)
+            user.save()
+            return HttpResponse("User registered successfully")
+        else:
+            return HttpResponse("Form is not valid")    
+    else:
+        form = UserForm()
+    context = {'form': form}
+    return render(request, 'expenses/user_signup.html', context)
 
 def expenses_home(request):
     expenses = Expenses.objects.all()
