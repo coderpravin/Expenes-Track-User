@@ -43,3 +43,6 @@ def user_login(request):
         form = UserLoginForm()
     context = {'form': form}    
     return render(request, 'expenses/user_login.html', context)
+
+def forgot_password(request):
+    return render(request, 'expenses/forgot_password.html')
