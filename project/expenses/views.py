@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Category,Expenses
 from .forms import UserForm,UserLoginForm
 from django.http import HttpResponse
@@ -14,6 +14,11 @@ def category_home(request):
     catogories = Category.objects.all()
     context = {'categories': catogories}
     return render(request, 'expenses/category_home.html', context)
+
+def category_page(request, category_id):
+    category = get_object_or_404(Category, pk=category_id)
+    context = {'category': category}
+    return render(request, 'expenses/category_page.html', context)
 
 def user_signup(request):
     if request.method == "POST":
@@ -38,9 +43,15 @@ def userSignup(request):
     if request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
-            form.save()
-            return HttpResponse("User signed up successfully!")
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            messages.success(request, 'User signed up successfully! Please login.')
+            return redirect('user-login')
         else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
             return redirect('user-signup')
     else:      
         form = UserForm()
