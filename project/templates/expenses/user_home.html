@@ -9,8 +9,115 @@
 
 {% block content %}
 
-<div class="container-fluid d-flex align-items-center justify-content-center h-100">
-   <div class="text-center">    
-        <h1 class="h3 mb-4 fw-bold">Welcome to the Expense Tracker!</h1>
+<div class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center">
+    <div class="container">
+        <div class="row">
+
+            <!-- Left Column – Profile -->
+            <div class="col-md-3 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Profile</h5>
+                        <p class="mb-1">Username</p>
+                        <p class="text-muted small">user@email.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column (9) – Main Content -->
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="fw-bold mb-3 text-center">
+                            Welcome to the Expense Tracker!
+                        </h4>
+                        <br>
+
+                        <!-- Three horizontal blank cards -->
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <!-- Blank card -->
+                                         <h4 class="fw-bold mb-3 text-center ">
+                                            <a href="{% url 'add-user-expenses' %}" class="text-decoration-none">
+                                                Add Expenses
+                                            </a>
+                                         </h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <!-- Blank card -->
+                                         <h4 class="fw-bold mb-3 text-center">
+                                            Total Expenses
+                                         </h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <!-- Blank card -->
+                                         <h4 class="fw-bold mb-3 text-center">
+                                            Last Month Expenses
+                                         </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- One horizontal blank cards -->
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <!-- Blank card -->
+                                         <h4 class="fw-bold mb-3 text-center">
+                                            Three Month Expense Analysis Bar
+                                         </h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <!-- Blank card -->
+                                         <h4 class="fw-bold mb-3 text-center">
+                                            DownLoad Expense Report pdf
+                                         </h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <!-- Blank card -->
+                                         <h4 class="fw-bold mb-3 text-center">
+                                            DownLoad Expense Report excel
+                                         </h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
+
+</div>
 {% endblock %}
