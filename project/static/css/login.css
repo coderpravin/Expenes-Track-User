@@ -1,0 +1,29 @@
+/* Forgot Password Link Styling */
+.forgot-password-link {
+    
+    
+}
+
+.forgot-password-link:hover {
+    color: #bb2d3b !important;
+    text-decoration: underline !important;
+}
+
+#signuplink{
+    font-weight: 600;
+    text-decoration: none;
+}
+
+#signuplink a:hover{
+    color: #bb2d3b;
+    font-weight: bolder;
+}
+
+/* Image Container Styling */
+.col-md-6 img {
+    max-width: 100%;
+    max-height: 100vh;
+    object-fit: cover;
+    width: 90%;
+    height: 90%;
+}

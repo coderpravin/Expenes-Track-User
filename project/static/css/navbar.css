@@ -1,0 +1,28 @@
+/* Remove navbar background */
+.custom-navbar {
+    background-color: transparent !important;
+    box-shadow: none;
+}
+
+/* Normal font (not bold) */
+.custom-navbar .navbar-brand,
+.custom-navbar .nav-link {
+    font-weight: 400;   /* normal */
+    color: #000;        /* black text */
+}
+
+/* Hover effect (optional) */
+.custom-navbar .nav-link:hover {
+    color: #0d6efd;
+}
+
+/* Login button custom style */
+.custom-navbar .btn {
+    font-weight: 400;
+    border-radius: 4px;
+}
+
+/* Remove focus outline shadow */
+.navbar-toggler {
+    box-shadow: none;
+}
