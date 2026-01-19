@@ -154,3 +154,6 @@ def success_password_reset(request):
 
 def userHomePage(request):
     return render(request, 'expenses/user_home.html')
+
+def add_user_expenses(request):
+    return render(request, 'user_profile/add_user_expenses.html')
