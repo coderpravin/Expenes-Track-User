@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}Navbar{% endblock %}
+    </title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg px-4 custom-navbar">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand" href="#">MyLogo</a>
+
+        <!-- Toggle button (mobile) -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Left side links -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact">Contact Us</a>
+                </li>
+            </ul>
+
+            <!-- Right side -->
+            <ul class="navbar-nav">
+                {% if not request.user.is_authenticated %}
+                <!-- Login Url -->
+                <li class="nav-item">
+                    <a class="btn btn-outline-dark" href="{% url 'user-login' %}">Login</a>
+                </li>   
+                {% else %}
+                <li class="nav-item">
+                <!-- Logout Url -->
+                    <a class="btn btn-outline-danger" href="{% url 'user-logout' %}">Logout</a>
+                </li> 
+                {% endif %}
+                
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

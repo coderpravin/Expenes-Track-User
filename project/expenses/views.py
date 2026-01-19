@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Category,Expenses
 from .forms import UserForm,UserLoginForm
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -68,7 +68,7 @@ def userLogin(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('category-home')
+                return redirect('user-home')
             else:
                 messages.error(request, "Invalid username or password.")
                 return redirect('user-login')   
@@ -78,6 +78,11 @@ def userLogin(request):
         form = UserLoginForm()
         context = {'form': form}    
     return render(request, 'expenses/user_login.html', context)
+
+def userLogout(request):
+    logout(request)
+    messages.success(request, "Logged out successfully.")
+    return redirect('user-login')   
 
 def forgot_password(request):
     if request.method == "POST":
@@ -146,3 +151,6 @@ def reset_password(request):
 
 def success_password_reset(request):
     return render(request, 'expenses/success_password_reset.html')
+
+def userHomePage(request):
+    return render(request, 'expenses/user_home.html')

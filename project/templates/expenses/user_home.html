@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Home Page{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid d-flex align-items-center justify-content-center h-100">
+   <div class="text-center">    
+        <h1 class="h3 mb-4 fw-bold">Welcome to the Expense Tracker!</h1>
+    </div>
+{% endblock %}
