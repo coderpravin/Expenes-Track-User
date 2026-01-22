@@ -184,6 +184,8 @@ def add_user_expenses(request):
 
 def user_total_expenses(request):
     expenses = Expenses.objects.all()
-    print(expenses)
-    context = {'expenses': expenses}
+    total_Expenses = sum(total.amount for total in expenses)
+
+    context = {'expenses': expenses,
+                'total_amount': total_Expenses}
     return render(request, 'user_profile/user_total_expenses.html', context )
