@@ -156,4 +156,34 @@ def userHomePage(request):
     return render(request, 'expenses/user_home.html')
 
 def add_user_expenses(request):
-    return render(request, 'user_profile/add_user_expenses.html')
+    categories = Category.objects.all()
+    
+
+    if request.method =="POST":
+        title = request.POST.get('title')
+        amount =  request.POST.get('amount')
+        description = request.POST.get('description')   
+        date = request.POST.get('date') 
+        category_id=request.POST.get('category')
+
+        category  = Category.objects.get(id=category_id)
+
+        Expenses.objects.create(
+            user=request.user,
+            title=title,
+            amount=amount,
+            description=description,
+            date=date,
+            category=category
+        )
+        
+        return redirect('user-total-expenses')
+
+    context = {'categories': categories}
+    return render(request, 'user_profile/add_user_expenses.html', context) 
+
+def user_total_expenses(request):
+    expenses = Expenses.objects.all()
+    print(expenses)
+    context = {'expenses': expenses}
+    return render(request, 'user_profile/user_total_expenses.html', context )
