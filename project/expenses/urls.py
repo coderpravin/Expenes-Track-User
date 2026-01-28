@@ -3,7 +3,7 @@ from .views import category_home, expenses_home, category_page, userSignup, user
 urlpatterns = [
      path('', category_home, name='category-home'),
      path('expenses', expenses_home , name='expenses_home'),
-     path('category/int:pk>', category_page , name='category_page'),
+     path('category/<int:pk>', category_page , name='category_page'),
      path('user-signup', userSignup, name='user-signup'),
      path('user-login', userLogin, name='user-login'),
      path('forgot-password/', forgot_password, name='forgot-password'),

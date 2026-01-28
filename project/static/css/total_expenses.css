@@ -1,3 +1,56 @@
+/* Left side Table */
+.month-year-table{
+    border: 2px solid #343a40; /* dark border */
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* subtle external shadow */
+    width: 100%;
+    margin-top: 20px;
+}
+
+.month-year-table th, .month-year-table td {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.month-year-table th {
+    background-color: #343a40; /* dark header */
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.month-year-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.month-year-table tbody tr:hover {
+    background-color: #e2e6ea;
+    transition: 0.3s;
+}
+
+.filter-item{
+    display: block; 
+    padding: 2px 2px;
+    margin: 2px 0;
+    text-decoration: none;
+    color: #343a40;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.filter-item:hover {
+    background-color: #343a40;
+    color: #fff;
+    transform: scale(1.05);
+
+.filter-item.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
 /* Page title styling */
 h4.text-center {
     font-size: 28px;

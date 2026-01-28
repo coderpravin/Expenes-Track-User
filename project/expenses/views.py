@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Category,Expenses
 from .forms import UserForm,UserLoginForm
@@ -8,6 +9,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 import random
+from timeline.models import Months, Year
 # Create your views here.
 
 def category_home(request):
@@ -166,6 +168,21 @@ def add_user_expenses(request):
         date = request.POST.get('date') 
         category_id=request.POST.get('category')
 
+        try:
+            date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+        except ValueError:
+            messages.error(request, 'Invalid date format. Please use YYYY-MM-DD.')
+            return redirect('add-user-expenses')
+
+        #check year is 2025-2026
+        date_year = date.year
+        year_obj = Year(year=date_year)
+        try:
+            year_obj.clean()
+        except Exception as e:
+            messages.error(request, str(e))
+            return redirect('add-user-expenses')
+
         category  = Category.objects.get(id=category_id)
 
         Expenses.objects.create(
@@ -183,9 +200,15 @@ def add_user_expenses(request):
     return render(request, 'user_profile/add_user_expenses.html', context) 
 
 def user_total_expenses(request):
+    months = Months.objects.all()
+    last_year = Year.objects.last()
+    first_year = Year.objects.first()
     expenses = Expenses.objects.all()
     total_Expenses = sum(total.amount for total in expenses)
 
     context = {'expenses': expenses,
-                'total_amount': total_Expenses}
+                'total_amount': total_Expenses,
+                'months': months, 
+                'last_year': last_year, 
+                'first_year': first_year}
     return render(request, 'user_profile/user_total_expenses.html', context )
