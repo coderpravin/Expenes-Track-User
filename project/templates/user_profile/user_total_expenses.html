@@ -28,12 +28,12 @@
                         <tr>
                             <td>{{ month.name }}</td>
                             <td>
-                                <a href="?month={{ month.name }}&year={{ first_year.year }}" class="filter-item">
+                                <a href="{% url 'month-year-expenses' %}?month={{ month.name }}&year={{ first_year.year }}" class="filter-item">
                                     {{ first_year.year }}
                                 </a>
                             </td>
                             <td>
-                                <a href="?month={{ month.name }}&year={{ last_year.year }}" class="filter-item">
+                                <a href="{% url 'month-year-expenses' %}?month={{ month.name }}&year={{ last_year.year }}" class="filter-item">
                                     {{ last_year.year }}
                                 </a>
                             </td>

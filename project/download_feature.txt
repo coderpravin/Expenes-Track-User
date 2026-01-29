@@ -1,0 +1,14 @@
+Feature: Download Expenses PDF & Excel
+
+Details:
+- Added month-wise expense filtering on user_total_expenses page.
+- Created templates:
+    - month_year_expenses.html
+    - pdf_template.html
+- Implemented PDF download using xhtml2pdf.
+- Implemented Excel download using openpyxl.
+- Added pagination for monthly expenses (10 records per page).
+- Updated requirements.txt with xhtml2pdf and openpyxl.
+- Updated user_total_expenses.html for proper layout of download buttons.
+- Bug fixes: corrected wb.active usage, fixed forloop counter with pagination.
+
