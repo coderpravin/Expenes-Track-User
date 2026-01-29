@@ -10,6 +10,10 @@ from django.core.mail import send_mail
 from django.conf import settings
 import random
 from timeline.models import Months, Year
+from django.core.paginator import Paginator
+from xhtml2pdf import pisa
+from django.template.loader import get_template
+from openpyxl import Workbook
 # Create your views here.
 
 def category_home(request):
@@ -212,3 +216,101 @@ def user_total_expenses(request):
                 'last_year': last_year, 
                 'first_year': first_year}
     return render(request, 'user_profile/user_total_expenses.html', context )
+
+
+def month_year_expenses(request):
+    month_name = request.GET.get('month')
+    year = request.GET.get('year')
+
+    expenses = Expenses.objects.all()
+
+    if month_name and year:
+        try:
+            month_number = datetime.datetime.strptime(month_name, '%B').month
+            year = int(year)
+
+            # Filter expenses by month and year
+            expenses = expenses.filter(date__year=year, date__month=month_number)
+        
+        except ValueError:
+            pass
+    
+    # Pagination: 10 records per page
+    paginator = Paginator(expenses, 10)
+    page_number = request.GET.get('page') #current page
+    expenses = paginator.get_page(page_number) #current_ object
+    context = {'month': month_name, 'year':year, 
+               'expenses':expenses, 'page_obj':expenses}
+    return render(request, 'user_profile/month_year_expenses.html',context)
+
+def download_pdf(request):
+    month_name = request.GET.get('month')
+    year = request.GET.get('year')
+
+    expenses = Expenses.objects.all()
+
+    if month_name and year:
+        month_number = datetime.datetime.strptime(month_name, '%B').month
+        year = int(year)
+        expenses = expenses.filter(date__year=year, date__month=month_number)
+    
+    template_path = 'user_profile/pdf_template.html'  # this PSF HTML page
+
+    context = {
+        'expenses': expenses,
+        'month': month_name,
+        'year': year,
+        'total_amount': sum(e.amount for e in expenses),
+    }
+    #create pdf page 
+    response = HttpResponse(content_type = 'application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Expenses_{month_name}_{year}.pdf"'
+    template = get_template(template_path)
+    html = template.render(context)
+    pisa_status = pisa.pisaDocument(src=html, dest=response)
+    if pisa_status.err:
+        return HttpResponse('Error generating PDF <pre>' + html + '</pre>')
+    return response
+    
+
+def download_excel(request):
+    month_name = request.GET.get('month')
+    year = request.GET.get('year')
+
+    expenses = Expenses.objects.all()
+    if month_name and year:
+        month_number = datetime.datetime.strptime(month_name, '%B').month
+        year = int(year)
+        expenses = expenses.filter(date__year=year, date__month=month_number)
+    
+    #create Excel Book
+    wb = Workbook()
+    ws = wb.active
+    ws.title = f"{month_name} {year} Expenses"
+
+    #Create header row
+    headers = ['#', 'Title', 'Category', 'Amount', 'Date', 'Description']
+    ws.append(headers)
+
+    #Write Expense valuye in row
+    for i, expense in enumerate(expenses, start=1):
+        ws.append([
+            i, 
+            expense.title,
+            expense.category.name,
+            expense.amount,
+            expense.date.strftime("%Y-%m-%d"),
+            expense.description
+        ])
+    total_amount = sum(e.amount for e in expenses)
+    ws.append(['', '', 'Total', total_amount, '', ''])
+
+    #Prepare HTTP response
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename=Expenses_{month_name}_{year}.xlsx'
+
+    #save response in Excel
+    wb.save(response)
+    return response
