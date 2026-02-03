@@ -1,14 +1,47 @@
-Feature: Download Expenses PDF & Excel
+========================================
+Celery & Redis Integration (Async Email)
+========================================
 
-Details:
-- Added month-wise expense filtering on user_total_expenses page.
-- Created templates:
-    - month_year_expenses.html
-    - pdf_template.html
-- Implemented PDF download using xhtml2pdf.
-- Implemented Excel download using openpyxl.
-- Added pagination for monthly expenses (10 records per page).
-- Updated requirements.txt with xhtml2pdf and openpyxl.
-- Updated user_total_expenses.html for proper layout of download buttons.
-- Bug fixes: corrected wb.active usage, fixed forloop counter with pagination.
+Overview:
+This update introduces asynchronous background task processing
+using Celery with Redis as the message broker.
+
+Motivation:
+Previously, email sending was executed synchronously inside
+Django views, which caused request blocking and slower response
+times. This change moves email delivery to a background worker.
+
+Key Additions:
+- Celery configuration added under project/celery.py
+- Redis configured as the message broker
+- django-celery-results enabled for task result tracking
+- Async email task implemented in expenses/tasks.py
+- Gmail SMTP integration using environment variables
+- Static navbar logo added under static/logo
+
+How It Works:
+1. Django triggers the task using send_register_email.delay()
+2. Redis queues the task
+3. Celery worker consumes the task
+4. Email is sent asynchronously via SMTP
+
+Configuration Notes:
+- Email credentials are stored in a local .env file
+- .env is intentionally excluded from version control
+- requirements.txt updated to reflect new dependencies
+
+Local Run Instructions:
+1. Start Redis server
+2. Start Celery worker:
+   celery -A project worker -l info
+3. Run Django server:
+   python manage.py runserver
+
+Security & Best Practices:
+- Sensitive credentials are not committed
+- Asynchronous processing improves performance and scalability
+- Setup follows Django + Celery recommended patterns
+
+This implementation is intended to be production-ready
+and easily extendable for future background tasks.
 

@@ -14,6 +14,7 @@ from django.core.paginator import Paginator
 from xhtml2pdf import pisa
 from django.template.loader import get_template
 from openpyxl import Workbook
+from .tasks import send_register_email
 # Create your views here.
 
 def category_home(request):
@@ -26,19 +27,6 @@ def category_page(request, category_id):
     context = {'category': category}
     return render(request, 'expenses/category_page.html', context)
 
-def user_signup(request):
-    if request.method == "POST":
-        form =UserForm(request.POST)
-        if form.is_valid():
-            user =  form.save(commit=False)
-            user.save()
-            return HttpResponse("User registered successfully")
-        else:
-            return HttpResponse("Form is not valid")    
-    else:
-        form = UserForm()
-    context = {'form': form}
-    return render(request, 'expenses/user_signup.html', context)
 
 def expenses_home(request):
     expenses = Expenses.objects.all()
@@ -52,6 +40,9 @@ def userSignup(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
+
+            #Trigger here ceklery
+            send_register_email.delay(user.email)
             messages.success(request, 'User signed up successfully! Please login.')
             return redirect('user-login')
         else:
