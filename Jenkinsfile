@@ -14,19 +14,9 @@ pipeline {
         }
 
         stage('Build & Install Dependencies') {
-            agent {
-                docker { 
-                    image 'python:3.10' 
-                    // Reuse the workspace so we don't redownload everything if possible, 
-                    // or just run it clean. 
-                    // For this pipeline, we will build the distinct Docker image defined in Dockerfile
-                    // But to keep it simple first, let's use the Dockerfile we created.
-                    reuseNode true
-                }
-            }
             steps {
-                // We actually want to build the image from our Dockerfile
                 script {
+                    // Build the Docker image on the Jenkins agent (which has Docker CLI)
                     dockerImage = docker.build("expense-tracker-test")
                 }
             }
