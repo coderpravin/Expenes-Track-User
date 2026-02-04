@@ -15,6 +15,9 @@ from xhtml2pdf import pisa
 from django.template.loader import get_template
 from openpyxl import Workbook
 from .tasks import send_register_email
+from django.utils import timezone
+from datetime import timedelta, date
+from django.db.models import Sum
 # Create your views here.
 
 def category_home(request):
@@ -150,7 +153,46 @@ def success_password_reset(request):
     return render(request, 'expenses/success_password_reset.html')
 
 def userHomePage(request):
-    return render(request, 'expenses/user_home.html')
+    expenses = Expenses.objects.filter(user=request.user)
+    #last month calculation
+    today = timezone.now().date()
+    first_day_of_this_month= today.replace(day=1)
+    last_day_of_last_month = first_day_of_this_month - timedelta(days=1)
+    first_day_of_last_month= last_day_of_last_month.replace(day=1)
+
+    total_last_month = expenses.filter(date__range=(first_day_of_last_month, last_day_of_last_month)).aggregate(total=Sum('amount'))['total'] or 0
+
+    #Three month calculation
+    def month_total(year, month):
+        return expenses.filter(
+            date__year=year,
+            date__month=month
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+    # Current month
+    feb_total = month_total(today.year, today.month)
+
+    # Last month (Jan)
+    jan_date = (today.replace(day=1) - timedelta(days=1))
+    jan_total = month_total(jan_date.year, jan_date.month)
+
+    # Two months back (Dec)
+    dec_date = (jan_date.replace(day=1) - timedelta(days=1))
+    dec_total = month_total(dec_date.year, dec_date.month)
+
+    # Max value for progress bar scaling
+    max_amount = max(feb_total, jan_total, dec_total, 1)
+
+    context = {
+        'total_last_month' : total_last_month,
+        'feb_total': feb_total,
+        'jan_total': jan_total,
+        'dec_total': dec_total,
+        'feb_percent': (feb_total / max_amount) * 100,
+        'jan_percent': (jan_total / max_amount) * 100,
+        'dec_percent': (dec_total / max_amount) * 100,
+    }
+    return render(request, 'expenses/user_home.html', context)
 
 def add_user_expenses(request):
     categories = Category.objects.all()
@@ -198,15 +240,24 @@ def user_total_expenses(request):
     months = Months.objects.all()
     last_year = Year.objects.last()
     first_year = Year.objects.first()
-    expenses = Expenses.objects.all()
+    expenses = Expenses.objects.filter(user=request.user)
     total_Expenses = sum(total.amount for total in expenses)
 
+    
+    #Find last Month
+
+    
     context = {'expenses': expenses,
                 'total_amount': total_Expenses,
                 'months': months, 
                 'last_year': last_year, 
-                'first_year': first_year}
+                'first_year': first_year,
+                
+                }
+    
+
     return render(request, 'user_profile/user_total_expenses.html', context )
+
 
 
 def month_year_expenses(request):

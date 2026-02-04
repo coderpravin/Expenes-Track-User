@@ -53,7 +53,9 @@
                                     <div class="card-body">
                                         <!-- Blank card -->
                                          <h4 class="fw-bold mb-3 text-center">
-                                            Total Expenses
+                                            <a href="{% url 'user-total-expenses' %}" class="text-decoration-none">
+                                               Total Expenses
+                                            </a>
                                          </h4>
                                     </div>
                                 </div>
@@ -61,11 +63,16 @@
 
                             <div class="col-md-4 mb-3">
                                 <div class="card h-100">
-                                    <div class="card-body">
+                                    <div class="card-body text-primary text-center">
                                         <!-- Blank card -->
-                                         <h4 class="fw-bold mb-3 text-center">
-                                            Last Month Expenses
-                                         </h4>
+                                         <h5 class="fw-bold mb-3 text-center">
+                                            Last Month Expense 
+                                         </h5>
+                                         <h5 class="fw-bold mb-3">
+                                            ₹ {{ total_last_month }}
+                                         </h5>
+
+                               
                                     </div>
                                 </div>
                             </div>
@@ -80,6 +87,47 @@
                                          <h4 class="fw-bold mb-3 text-center">
                                             Three Month Expense Analysis Bar
                                          </h4>
+
+                                         <!-- December -->
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="fw-semibold">December</span>
+                                                <span class="fw-bold">₹ {{ dec_total }}</span>
+                                            </div>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar bg-secondary"
+                                                    style="width: {{ dec_percent }}%;">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- January -->
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="fw-semibold">January</span>
+                                                <span class="fw-bold">₹ {{ jan_total }}</span>
+                                            </div>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar bg-info"
+                                                    style="width: {{ jan_percent }}%;">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- February -->
+                                        <div class="mb-2">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="fw-semibold">February</span>
+                                                <span class="fw-bold">₹ {{ feb_total }}</span>
+                                            </div>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar bg-primary"
+                                                    style="width: {{ feb_percent }}%;">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
                                     </div>
                                 </div>
                             </div>
@@ -92,7 +140,9 @@
                                     <div class="card-body">
                                         <!-- Blank card -->
                                          <h4 class="fw-bold mb-3 text-center">
-                                            DownLoad Expense Report pdf
+                                            <a href="{% url 'user-total-expenses' %}" class="text-decoration-none">
+                                               DownLoad Expense Report pdf
+                                            </a>
                                          </h4>
                                     </div>
                                 </div>
@@ -103,8 +153,10 @@
                                     <div class="card-body">
                                         <!-- Blank card -->
                                          <h4 class="fw-bold mb-3 text-center">
-                                            DownLoad Expense Report excel
-                                         </h4>
+                                            <a href="{% url 'user-total-expenses' %}" class="text-decoration-none">
+                                               DownLoad Expense Report excel
+                                            </a> 
+                                        </h4>
                                     </div>
                                 </div>
                             </div>
