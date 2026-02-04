@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     libcairo2-dev \
     pkg-config \
     libffi-dev \
-    libgdk-pixbuf2.0-dev \
+    libgdk-pixbuf-2.0-dev \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 

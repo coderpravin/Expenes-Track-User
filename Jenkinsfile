@@ -35,6 +35,15 @@ pipeline {
             }
         }
 
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    // Requires SonarQube Webhook to be configured in SonarQube pointing to Jenkins
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Security Scan (Dependencies)') {
             steps {
                 // Run the docker image we built to check dependencies inside it
