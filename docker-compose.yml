@@ -20,6 +20,32 @@ services:
     networks:
       - ci-network
 
+  web:
+    build: .
+    container_name: expense-tracker-app
+    command: sh -c "python project/manage.py migrate && python project/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+      - sqlite_data:/db
+    environment:
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_NAME=expense_tracker_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+      - EMAIL_HOST_USER=pravin0324@gmail.com
+      # Note: PASSWORD to be passed via env or .env file for security, but hardcoding for now as requested
+      - EMAIL_HOST_PASSWORD=jdwg ifbp wbwf thuy
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - ci-network
+
   sonarqube:
     image: sonarqube:community
     container_name: sonarqube
@@ -31,8 +57,27 @@ services:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_logs:/opt/sonarqube/logs
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
     networks:
       - ci-network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    environment:
+      - POSTGRES_DB=expense_tracker_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ci-network
+    ports:
+      - "5432:5432"
 
 networks:
   ci-network:
@@ -43,3 +88,5 @@ volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_logs:
+  sqlite_data:
+  postgres_data:

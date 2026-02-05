@@ -44,7 +44,15 @@ This starts:
     -   **Name**: `sonar-server` (Must match `Jenkinsfile`!).
     -   **Server URL**: `http://sonarqube:9000` (Note: Use container name `sonarqube`, not `localhost`).
     -   **Server authentication token**: Add the token you copied from SonarQube as a "Secret Text" credential.
-5.  **Configure Docker Tool** (Optional but good practice):
+5.  **Configure SonarQube Scanner Tool**:
+    -   Go to **Manage Jenkins > Tools**.
+    -   Scroll to **SonarQube Scanner installations**.
+    -   Click **Add SonarQube Scanner**.
+    -   **Name**: `SonarScanner` (This EXACLTY matches the Jenkinsfile).
+    -   **Install automatically**: Checked.
+    -   Select "Install from Maven Central".
+    -   Click **Save**.
+6.  **Configure Docker Tool** (Optional but good practice):
     -   Go to **Manage Jenkins > Tools**.
     -   Ensure "Docker" is configured or available in path. Usually, the "Docker Pipeline" plugin handles the node block.
 

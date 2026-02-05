@@ -1,121 +1,135 @@
 # Expenses Machine - Expense Tracker
 
-This is a Django-based Expense Tracker application designed to help users track their expenses, generate reports, and visualize their spending over time. It supports asynchronous tasks using Celery and Redis.
+![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![Django](https://img.shields.io/badge/Django-5.0-green)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue)
 
-## Project Structure
+A robust, full-stack Expense Tracker application designed for scalability and enterprise-grade DevOps practices. It features asynchronous task processing, comprehensive reporting, and a fully Dockerized CI/CD pipeline using Jenkins and SonarQube.
 
-The project is structured as follows:
+---
 
--   **`project/`**: Main Django project configuration (`settings.py`, `urls.py`, etc.).
--   **`expenses/`**: App for managing expenses.
--   **`timeline/`**: App for timeline visualization.
--   **`templates/`**: HTML templates for the frontend.
--   **`static/`**: Static files (CSS, JS, Images).
--   **`manage.py`**: Django's command-line utility.
+## 🏗️ System Architecture
 
-## Prerequisites
+### Application Flow
+The application follows a micro-service-ready architecture, decoupling the web server from background processing.
 
-Before running the project, ensure you have the following installed:
+```mermaid
+graph TD
+    Client[User Browser] -->|HTTP Request| Nginx[Nginx / Django Server]
+    Nginx -->|Read/Write| DB[(SQLite / Postgres)]
+    Nginx -->|Async Task| Redis[Redis Broker]
+    Redis -->|Process Job| Celery[Celery Worker]
+    Celery -->|Email/PDF| Client
+```
 
-1.  **Python 3.10+**: [Download Python](https://www.python.org/downloads/)
-2.  **Redis**: Required for Celery (Async tasks).
-    -   **Windows**: [Memurai](https://www.memurai.com/) (Redis-compatible) or run Redis via WSL/Docker.
-    -   **Linux/Mac**: Install via your package manager (e.g., `sudo apt install redis-server`).
+### CI/CD Pipeline (DevOps)
+Every code push triggers an automated quality & security pipeline.
 
-## Installation & Setup
+```mermaid
+graph LR
+    Dev[Developer] -->|git push| GitHub[GitHub Repo]
+    GitHub -->|Webhook| Jenkins[Jenkins CI]
+    subgraph Jenkins Pipeline
+        Checkout --> Install[Install Dependencies]
+        Install --> Sonar[SonarQube Analysis]
+        Sonar --> Quality{Quality Gate}
+        Quality -->|Pass| Security[Security Scan]
+        Quality -->|Fail| Stop[Abort Build]
+        Security --> Test[Unit Tests]
+    end
+    Sonar -.->|Report| Dashboard[SonarQube Dashboard]
+```
 
-1.  **Clone the repository** (if you haven't already):
+---
+
+## 🚀 Key Components & Code Highlights
+
+### 1. Asynchronous Task Processing (`tasks.py`)
+We use **Celery** to handle heavy lifting (like generating PDF reports) without freezing the UI.
+```python
+@shared_task
+def generate_pdf_report(user_id):
+    # This runs in the background
+    user = User.objects.get(id=user_id)
+    pdf = render_to_pdf('expenses/report.html', context)
+    send_email(user.email, pdf)
+```
+
+### 2. DevOps Automation (`Jenkinsfile`)
+Our pipeline logic is defined as code, ensuring reproducibility.
+```groovy
+stage('Quality Gate') {
+    steps {
+        timeout(time: 5, unit: 'MINUTES') {
+            waitForQualityGate abortPipeline: true
+        }
+    }
+}
+```
+
+---
+
+## 💻 Setup Guide (Multi-OS)
+
+Since the project is **Dockerized**, the setup experience is identical for **Windows**, **Linux**, and **macOS**.
+
+### Prerequisites
+-   **Docker Desktop** (Windows/Mac) or **Docker Engine** (Linux)
+-   **Note**: Windows users must ensure WSL 2 is configured for best performance.
+
+### Quick Start
+1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/yourusername/ExpenseTracker_Mech.git
-    cd ExpenseTracker_Mech/Expenes-Track-User
+    git clone https://github.com/coderpravin/Expenes-Track-User.git
+    cd Expenes-Track-User
     ```
 
-2.  **Create a Virtual Environment**:
-    It is recommended to use a virtual environment to manage dependencies.
-    ```bash
-    python -m venv venv
-    ```
-
-3.  **Activate the Virtual Environment**:
-    -   **Windows (Command Prompt)**:
-        ```cmd
-        venv\Scripts\activate
-        ```
-    -   **Windows (PowerShell)**:
-        ```powershell
-        .\venv\Scripts\Activate.ps1
-        ```
-    -   **Mac/Linux**:
-        ```bash
-        source venv/bin/activate
-        ```
-
-4.  **Install Dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-5.  **Environment Variables**:
-    Create a `.env` file in the `project/` directory (next to `settings.py`) or in the root `Expenes-Track-User` directory (depending on how you want to manage it, but settings loads from `BASE_DIR / ".env"` which is the `project` inner folder's parent).
-    
-    The code looks for `.env` in `Expenes-Track-User/project/`.
-    
-    Add the following variables to `.env`:
+2.  **Environment Setup**
+    Create a `.env` file in `project/` with your credentials:
     ```ini
     EMAIL_HOST_USER=your_email@gmail.com
-    EMAIL_HOST_PASSWORD=your_app_specific_password
-    # Add other keys if necessary (e.g., SECRET_KEY, DEBUG)
+    EMAIL_HOST_PASSWORD=your_app_password
     ```
 
-6.  **Apply Migrations**:
-    Initialize the database (SQLite by default).
+3.  **Launch Infrastructure**
+    This command spins up **Jenkins**, **SonarQube**, and the **Web App** (plus Redis/Worker).
     ```bash
-    cd project
-    python manage.py migrate
+    docker-compose up -d --build
     ```
 
-7.  **Create a Superuser** (Optional, for Admin access):
-    ```bash
-    python manage.py createsuperuser
-    ```
+4.  **Access Services**
+    -   **Web App**: `http://localhost:8000` (Running in Docker with auto-migrations)
+    -   **Jenkins**: `http://localhost:8080`
+    -   **SonarQube**: `http://localhost:9000`
 
-## Running the Application
+---
 
-To run the full application, you need to run three separate processes (terminals):
+## 📈 Scalability & Future Roadmap
 
-1.  **Start Redis Server**:
-    Ensure your Redis server is running.
-    -   **Windows**: If installed as a service, it might be running already. Verify with `redis-cli ping`.
+This project is designed to grow from a single laptop to a global cloud deployment.
 
-2.  **Start Django Development Server**:
-    In your first terminal (with venv activated):
-    ```bash
-    cd project
-    python manage.py runserver
-    ```
-    Access the app at: `http://127.0.0.1:8000/`
+### How it Scales
+1.  **Containerization**: The app is packaged in Docker, meaning "write once, run anywhere".
+2.  **Stateless App Server**: We can run 10 Django containers behind a Load Balancer (AWS ALB) to handle millions of requests.
+3.  **Horizontal Worker Scaling**: If report generation gets slow, we simply add more **Celery Worker** containers to consume queues from Redis faster.
+4.  **Database Decoupling**: Currently SQLite (optimized with Docker Volumes), but the config allows switching to **AWS RDS (PostgreSQL)** by changing just one environment variable.
 
-3.  **Start Celery Worker**:
-    In a second terminal (with venv activated):
-    This processes background tasks (e.g., email sending, report generation).
-    ```bash
-    cd project
-    celery -A project worker -l info
-    ```
-    *Note: On Windows, you might need to use `celery -A project worker --pool=solaris -l info` or `--pool=solo` if the default prefork pool has issues.*
+### Future Deployment Plan (AWS)
+To take this to production, we will move from Local Docker Compose to **AWS**:
 
-## Features
+1.  **Code**: Stored in **GitHub**.
+2.  **CI/CD**: Jenkins pushes Docker Images to **AWS ECR** (Elastic Container Registry).
+3.  **Compute**: **AWS ECS (Fargate)** will run our Django and Celery containers serverlessly.
+4.  **Data**:
+    -   **RDS**: Managed PostgreSQL.
+    -   **ElastiCache**: Managed Redis for queues.
+    -   **S3**: Storing generated PDF reports.
 
--   **Dashboard**: Overview of expenses.
--   **Add Expense**: Log daily expenses with categories.
--   **Timeline**: Visualize spending history.
--   **Reports**: Export data to CSV/PDF (powered by `openpyxl` and `xhtml2pdf`).
--   **Email Notifications**: Async email alerts via Celery.
+---
 
-## Troubleshooting
+## 🛠 Troubleshooting
 
--   **Redis Connection Error**: Ensure Redis is installed and running on `localhost:6379`.
--   **Celery Issues on Windows**: If Celery doesn't process tasks, try running with `-P solo`:
-    ```bash
-    celery -A project worker -l info -P solo
-    ```
+-   **"Docker not found" in Jenkins**: Ensure you are using the custom `Dockerfile.jenkins` which installs the Docker CLI.
+-   **Line Ending Errors**: If scripts fail on Windows/Linux boundaries, ensure `.gitattributes` is present to enforce LF line endings.
+-   **SQLite "Disk I/O Error"**: We use a **Docker Named Volume** (`sqlite_data`) to store the database. This bypasses Windows/OneDrive file locking issues. Your database file is safe inside Docker, not in your Windows folder.
